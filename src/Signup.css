@@ -1,0 +1,41 @@
+
+.container {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    height: 50vh; /* Set the container height to fill the viewport */
+    
+  }
+  
+  .centered-element  {
+    background-color: #63aed1;
+    padding: 80px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px; /* Set a maximum width to the centered element */
+    width: 100%; /* Ensure the element takes full width within the container */
+    font-size: 20px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(3, 46, 116);
+}
+.centered-element .button{
+    
+        font-size: 20px;
+        background-color:rgb(225, 30, 30);
+        border-radius: 8px;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(239, 240, 242);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1) ;
+   
+}
+  
+.welcome-card{
+    display: flex;
+    justify-content: center;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(3, 46, 116);
+    font-size: 30px;
+}
+body{
+    background-color: rgb(185, 225, 221);
+}
