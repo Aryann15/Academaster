@@ -1,27 +1,31 @@
 import React from 'react'
 import './Signup.css'
-
+import { TextField } from '@mui/material'
+import Button from '@mui/material/Button'
 const Signup = () => {
   return (
-    <div className='container'>
-        <div className="centered-element">
-       Username = <input type="text" style={{
-        padding: 5,
-        borderRadius: 8,
-    boxShadow:" 0 4 8 rgba(0, 0, 0, 0.1)"}} />
-       <br />
-       Password = <input type="text" style={{
-        padding: 5,
-        borderRadius: 8,
-    boxShadow:" 0 4 8 rgba(0, 0, 0, 0.1)"}} />
-       
-       <br />
-       <button style={{
-        padding: 10,
+    <div> <center>
+        <div style={{marginTop:150,
+        marginBottom:10}}>
+Welcome to Academaster! Sign Up Below!
+        </div>
+
+</center>
+<center>
+
+
+    <div style={{
+        border: '2px solid black',
+        width:400,
+        marginTop: 150
+    }}>
         
-        borderRadius: 8,
-    boxShadow:" 0 4 8 rgba(0, 0, 0, 0.1)"}}>Sign up</button>
-       </div></div>
+        <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+       <br />
+       Password = <input type="text" ></input>
+       <br />
+       <Button variant='contained'> Sign Up</Button>
+       </div></center></div> 
   )
 }
 
