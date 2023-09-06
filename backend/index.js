@@ -7,7 +7,19 @@ let ADMINS = [];
 let USERS = [];
 let COURSES = [];
 
-//admin routes
+const adminAuthentication = (req, res, next) => {
+  const { username, password } = req.headers;
+  const admin = ADMINS.find(
+    (a) => a.username === username && a.password === password
+  );
+  if (admin) {
+    next();
+  } else {
+    res.status(403).json({ message: "Admina uthentication failed! " });
+  }
+};
+
+/ /admin routes
 
 app.post("/admin/signup", (req, res) => {
   const admin = req.body;
@@ -19,8 +31,8 @@ app.post("/admin/signup", (req, res) => {
     res.json({ message: " Admin created succesfully" });
   }
 });
-app.post("/admin/login", (req, res) => {
-    
+app.post("/admin/login", adminAuthentication, (req, res) => {
+  res.json({ message: "" });
 });
 app.post("/admin/courses", (req, res) => {});
 app.put("/admin/courses/:courseId", (req, res) => {});
