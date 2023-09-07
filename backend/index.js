@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-app.use(express.json);
+app.use(express.json());
 
 let ADMINS = [];
 let USERS = [];
@@ -15,11 +15,11 @@ const adminAuthentication = (req, res, next) => {
   if (admin) {
     next();
   } else {
-    res.status(403).json({ message: "Admina uthentication failed! " });
+    res.status(403).json({ message: "Admin authentication failed! " });
   }
 };
 
-/ /admin routes
+//admin routes
 
 app.post("/admin/signup", (req, res) => {
   const admin = req.body;
@@ -31,13 +31,30 @@ app.post("/admin/signup", (req, res) => {
     res.json({ message: " Admin created succesfully" });
   }
 });
-app.post("/admin/login", adminAuthentication, (req, res) => {
-  res.json({ message: "" });
-});
-app.post("/admin/courses", (req, res) => {});
-app.put("/admin/courses/:courseId", (req, res) => {});
-app.get("/admin/courses", (req, res) => {});
 
+app.post("/admin/login", adminAuthentication, (req, res) => {
+  res.json({ message: " logged in successfully" });
+});
+
+app.post("/admin/courses", adminAuthentication, (req, res) => {
+  const course = req.body;
+  course.id = Date.now(); //use timestamp as course ID
+  COURSES.push(course);
+  res.json({ message: "Course created successfully", courseId: course.id });
+});
+
+app.put("/admin/courses/:courseId",adminAuthentication, (req, res) => {
+  const courseId = Number(req.params.courseId);
+  const course = COURSES.find(c => c.id === courseId)
+  if (course){
+    Object.assign(course,req.body);
+    res.json ({ message: "Course updated successfully"});
+  }else {
+    res.status(404).json ({ message : "Course not found"})
+  }
+});
+
+app.get("/admin/courses", (req, res) => {});
 //user routes
 
 app.post("/user/signup", (req, res) => {});
