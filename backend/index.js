@@ -19,6 +19,8 @@ const adminAuthentication = (req, res, next) => {
   }
 };
 
+
+
 //admin routes
 
 app.post("/admin/signup", (req, res) => {
@@ -43,24 +45,37 @@ app.post("/admin/courses", adminAuthentication, (req, res) => {
   res.json({ message: "Course created successfully", courseId: course.id });
 });
 
-app.put("/admin/courses/:courseId",adminAuthentication, (req, res) => {
+app.put("/admin/courses/:courseId", adminAuthentication, (req, res) => {
   const courseId = Number(req.params.courseId);
-  const course = COURSES.find(c => c.id === courseId)
-  if (course){
-    Object.assign(course,req.body);
-    res.json ({ message: "Course updated successfully"});
-  }else {
-    res.status(404).json ({ message : "Course not found"})
+  const course = COURSES.find((c) => c.id === courseId);
+  if (course) {
+    Object.assign(course, req.body);
+    res.json({ message: "Course updated successfully" });
+  } else {
+    res.status(404).json({ message: "Course not found" });
   }
 });
 
-app.get("/admin/courses",adminAuthentication, (req, res) => {
-  res.json({ courses: COURSES})
+app.get("/admin/courses", adminAuthentication, (req, res) => {
+  res.json({ courses: COURSES });
 });
 //user routes
 
-app.post("/user/signup", (req, res) => {});
-app.post("/user/login", (req, res) => {});
+app.post("/user/signup", (req, res) => {
+  const user = { ...req.body, purchasedCourses: [] };
+  const existingUser = USERS.find((a) => a.username === user.username);
+  if (existingUser) {
+    res
+      .status(403)
+      .json({ message: "Someone with that username already exists" });
+  } else {
+    USERS.push(user);
+    res.json({ message: "User created successfully" });
+  }
+});
+app.post("/user/login", (req, res) => {
+
+});
 app.get("/user/courses", (req, res) => {});
 app.post("/user/courses/:courseId", (req, res) => {});
 app.get("/user/purchasedCourses", (req, res) => {});
