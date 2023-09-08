@@ -18,16 +18,18 @@ const adminAuthentication = (req, res, next) => {
     res.status(403).json({ message: "Admin authentication failed! " });
   }
 };
-const userAuthentication = (res,req,next) => {
-  const {username,password} = req.headers;
-  const user  =USERS.find(
-    (a) => a.username === username && a.password === password )
+const userAuthentication = (res, req, next) => {
+  const { username, password } = req.headers;
+  const user = USERS.find(
+    (a) => a.username === username && a.password === password
+  );
   if (user) {
-    next() 
-  }else {
-    res.status(403).json({message: "user authentication failed!"})
+    req.user=user; 
+    next();
+  } else {
+    res.status(403).json({ message: "user authentication failed!" });
   }
-}
+};
 
 //admin routes
 
@@ -81,12 +83,28 @@ app.post("/user/signup", (req, res) => {
     res.json({ message: "User created successfully" });
   }
 });
-app.post("/user/login",userAuthentication, (req, res) => {
+app.post("/user/login", userAuthentication, (req, res) => {
+  res.json({ message: "Logged in successfully" });
+});
+
+app.get("/user/courses", userAuthentication, (req, res) => {
+  res.json({ courses: COURSES.filter((c) => c.published) });
+});
+
+app.post("/user/courses/:courseId", userAuthentication, (req, res) => {
+  const courseId = Number(req.params.courseId);
+  const course = COURSES.find((c) => c.id === courseId && c.published);
+  if (course) {
+    req.user.purchasedCourses.push(courseId);
+    req.json({ message: "Course ourchased successfully " });
+  } else {
+    res.status(404).json({ message: "Course not found or not available!" });
+  }
+});
+
+app.get("/user/purchasedCourses", (req, res) => {
   
 });
-app.get("/user/courses", (req, res) => {});
-app.post("/user/courses/:courseId", (req, res) => {});
-app.get("/user/purchasedCourses", (req, res) => {});
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
