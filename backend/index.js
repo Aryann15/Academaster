@@ -18,7 +18,7 @@ const adminAuthentication = (req, res, next) => {
     res.status(403).json({ message: "Admin authentication failed! " });
   }
 };
-const userAuthentication = (res, req, next) => {
+const userAuthentication = (req, res, next) => {
   const { username, password } = req.headers;
   const user = USERS.find(
     (a) => a.username === username && a.password === password
@@ -96,14 +96,21 @@ app.post("/user/courses/:courseId", userAuthentication, (req, res) => {
   const course = COURSES.find((c) => c.id === courseId && c.published);
   if (course) {
     req.user.purchasedCourses.push(courseId);
-    req.json({ message: "Course ourchased successfully " });
+    res.json({ message: "Course purchased successfully " });
   } else {
     res.status(404).json({ message: "Course not found or not available!" });
   }
 });
 
-app.get("/user/purchasedCourses", (req, res) => {
-  
+app.get("/user/purchasedCourses",userAuthentication, (req, res) => {
+  var purchasedCourseId = req.user.purchasedCourses;
+  var purchasedCourses = []
+  for (let i=0; i< COURSES.length; i++){
+    if (purchasedCourseId.indexOf(COURSES[i].id)!==-1){
+      purchasedCourses.push(COURSES[i])
+    }
+  }
+  res.json({purchasedCourses})
 });
 
 app.listen(3000, () => {
