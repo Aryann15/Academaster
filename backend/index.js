@@ -18,8 +18,16 @@ const adminAuthentication = (req, res, next) => {
     res.status(403).json({ message: "Admin authentication failed! " });
   }
 };
-
-
+const userAuthentication = (res,req,next) => {
+  const {username,password} = req.headers;
+  const user  =USERS.find(
+    (a) => a.username === username && a.password === password )
+  if (user) {
+    next() 
+  }else {
+    res.status(403).json({message: "user authentication failed!"})
+  }
+}
 
 //admin routes
 
@@ -73,8 +81,8 @@ app.post("/user/signup", (req, res) => {
     res.json({ message: "User created successfully" });
   }
 });
-app.post("/user/login", (req, res) => {
-
+app.post("/user/login",userAuthentication, (req, res) => {
+  
 });
 app.get("/user/courses", (req, res) => {});
 app.post("/user/courses/:courseId", (req, res) => {});
