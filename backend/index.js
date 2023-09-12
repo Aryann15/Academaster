@@ -57,36 +57,39 @@ const authenticateJwt = (req,res,next) => {
   }
 }
 
+mongoose.connect('mongodb+srv://aryan158:chidori@cluster0.5gp1qta.mongodb.net/')
+
 //admin routes
 
-app.post("/admin/signup", (req, res) => {
-  const admin = req.body;
-  const existingAdmin = ADMINS.find((a) => a.username === admin.username);
-  if (existingAdmin) {
+app.post("/admin/signup", async (req, res) => {
+  const {username,password} = req.body;
+  const admin = await Admin.findOne({username});
+  if (admin) {
     res.status(403).json({ message: "admin already exists" });
   } else {
-
-    ADMINS.push(admin);
-    const token = generateJwt(admin)
+    const obj = {username: username,password:password}
+    const newAdmin = new Admin (obj);
+    await newAdmin.save();
+    const token = jwt.sign({username , role: 'admin'}, secretKey, {expiresIn: '1h'})
     res.json({ message: " Admin created succesfully",token });
   }
 });
 
-app.post("/admin/login", (req, res) => {
+app.post("/admin/login", async (req, res) => {
   const {username,password} = req.headers;
-  const admin = ADMINS.find(a => a.username ==username && a.password == password)
+  const admin =  await Admin.findOne({username, password})
   if (admin){
-    const token= generateJwt(admin)
+    const token= jwt.sign({username , role:'admin'}, secretKey, { expiresIn: '1h'})
     res.json({ message: " logged in successfully", token });
   }else{
     res.status(403).json({message : "admin authentication failed "})
   }
 });
 
-app.post("/admin/courses",authenticateJwt, (req, res) => {
-  const course = req.body;
+app.post("/admin/courses",authenticateJwt, async (req, res) => {
+  const course = new Course(req.body);
+  await course.save();
   course.id = Date.now(); //use timestamp as course ID
-  COURSES.push(course);
   res.json({ message: "Course created successfully", courseId: course.id });
 });
 
