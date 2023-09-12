@@ -71,17 +71,23 @@ app.post("/admin/signup", (req, res) => {
 
 app.post("/admin/login", (req, res) => {
   const {username,password} = req.headers;
-  res.json({ message: " logged in successfully" });
+  const admin = ADMINS.find(a => a.username ==username && a.password == password)
+  if (admin){
+    const token= generateJwt(admin)
+    res.json({ message: " logged in successfully", token });
+  }else{
+    res.status(403).json({message : "admin authentication failed "})
+  }
 });
 
-app.post("/admin/courses", adminAuthentication, (req, res) => {
+app.post("/admin/courses",authenticateJwt, (req, res) => {
   const course = req.body;
   course.id = Date.now(); //use timestamp as course ID
   COURSES.push(course);
   res.json({ message: "Course created successfully", courseId: course.id });
 });
 
-app.put("/admin/courses/:courseId", adminAuthentication, (req, res) => {
+app.put("/admin/courses/:courseId", authenticateJwt, (req, res) => {
   const courseId = Number(req.params.courseId);
   const course = COURSES.find((c) => c.id === courseId);
   if (course) {
@@ -92,7 +98,7 @@ app.put("/admin/courses/:courseId", adminAuthentication, (req, res) => {
   }
 });
 
-app.get("/admin/courses", adminAuthentication, (req, res) => {
+app.get("/admin/courses",authenticateJwt , (req, res) => {
   res.json({ courses: COURSES });
 });
 //user routes
