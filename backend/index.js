@@ -7,6 +7,15 @@ let ADMINS = [];
 let USERS = [];
 let COURSES = [];
 
+const secretKey = "tears_on_my_keyboard"
+
+const generateJwt = (user) => {
+  const payload = {username: user.username}
+  return generateJwt.sign(payload,secretKey,{expiresIn:'1h'})
+}
+
+
+
 const adminAuthentication = (req, res, next) => {
   const { username, password } = req.headers;
   const admin = ADMINS.find(
