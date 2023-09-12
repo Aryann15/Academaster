@@ -30,30 +30,6 @@ const authenticateJwt = (req,res,next) => {
   }
 }
 
-const adminAuthentication = (req, res, next) => {
-  const { username, password } = req.headers;
-  const admin = ADMINS.find(
-    (a) => a.username === username && a.password === password
-  );
-  if (admin) {
-    next();
-  } else {
-    res.status(403).json({ message: "Admin authentication failed! " });
-  }
-};
-const userAuthentication = (req, res, next) => {
-  const { username, password } = req.headers;
-  const user = USERS.find(
-    (a) => a.username === username && a.password === password
-  );
-  if (user) {
-    req.user=user; 
-    next();
-  } else {
-    res.status(403).json({ message: "user authentication failed!" });
-  }
-};
-
 //admin routes
 
 app.post("/admin/signup", (req, res) => {
@@ -149,7 +125,10 @@ app.post("/user/courses/:courseId", userAuthentication, (req, res) => {
   }
 });
 
-app.get("/user/purchasedCourses",userAuthentication, (req, res) => {
+app.get("/user/purchasedCourses",authenticateJwt, (req, res) => {
+  const user = USERS.find(u => u.username === req.user.username);
+  if (user && user.purchasedCourses)
+  
   var purchasedCourseId = req.user.purchasedCourses;
   var purchasedCourses = []
   for (let i=0; i< COURSES.length; i++){
