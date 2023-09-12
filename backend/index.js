@@ -136,35 +136,35 @@ app.post("/user/login",async (req, res) => {
 
 app.get("/user/courses",authenticateJwt, async (req, res) => {
   const courses = await Course.find({published: true})
+  res.json({courses})
 });
 
 app.post("/user/courses/:courseId",authenticateJwt, async (req, res) => {
   
   const course = await Course.findById(req.params.courseId)
   if (course) {
-    const user = USERS.find(u => u.username === req.user.username);
+    const user = await User.findOne({ username: req.user.username })
     if (user){
-      if(!user.purchasedCourses){
-        user.purchasedCourses =[];
+        user.purchasedCourses.push(course);
+        await user.save()
+        res.json({message:" course purchased successfully"})
+      }else{
+        res.status(403).json({message: "User not found"})
       }
-      user.purchasedCourses.push(course)
-      res.json({message:" course purchased successfully"})
-    }else{
-      res.status(403).json({message: "User not found"})
     }
-  }else{
-    res.status(404).json({message: "course not found"})
-  }
+    else{
+      res.status(404).json({message: "course not found"})
+    }
 });
 
-app.get("/user/purchasedCourses",authenticateJwt, (req, res) => {
-  const user = USERS.find(u => u.username === req.user.username);
-  if (user && user.purchasedCourses)
+app.get("/user/purchasedCourses",authenticateJwt,async (req, res) => {
+  const user = await User.findOne ({username: req.user.username}).populate('purchasedCourses')
+  if (user)
   {
-    res.json({purchasedCourses: user.purchasedCourses})
+    res.json({purchasedCourses: user.purchasedCourses || [] })
   }
   else{
-    res.status(403).json({message: "no courses purchased"})
+    res.status(403).json({message: "user not fnd"})
   }
 });
 
