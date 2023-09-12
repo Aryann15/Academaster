@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const jwt = require ('jsonwebtoken')
+const mongoose = require ('mongoose')
 app.use(express.json());
 
 let ADMINS = [];
@@ -8,6 +9,27 @@ let USERS = [];
 let COURSES = [];
 
 const secretKey = "tears_on_my_keyboard"
+
+//mongoose schemas
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+  purchasedCourses: [{type: mongoose.Schema.Types.ObjectId, ref:'Course'}]
+})
+
+const adminSchema = new mongoose.Schema({
+  username: String,
+  password: String
+})
+
+const courseSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  price: Number,
+  imageLink: String,
+  published: Boolean
+})
+
 
 const generateJwt = (user) => {
   const payload = {username: user.username}
@@ -106,7 +128,7 @@ app.get("/user/courses",authenticateJwt, (req, res) => {
   res.json({ courses: COURSES });
 });
 
-app.post("/user/courses/:courseId", userAuthentication, (req, res) => {
+app.post("/user/courses/:courseId",authenticateJwt, (req, res) => {
   const courseId = Number(req.params.courseId);
   const course = COURSES.find((c) => c.id === courseId );
   if (course) {
@@ -128,17 +150,18 @@ app.post("/user/courses/:courseId", userAuthentication, (req, res) => {
 app.get("/user/purchasedCourses",authenticateJwt, (req, res) => {
   const user = USERS.find(u => u.username === req.user.username);
   if (user && user.purchasedCourses)
-  
-  var purchasedCourseId = req.user.purchasedCourses;
-  var purchasedCourses = []
-  for (let i=0; i< COURSES.length; i++){
-    if (purchasedCourseId.indexOf(COURSES[i].id)!==-1){
-      purchasedCourses.push(COURSES[i])
-    }
+  {
+    res.json({purchasedCourses: user.purchasedCourses})
   }
-  res.json({purchasedCourses})
+  else{
+    res.status(403).json({message: "no courses purchased"})
+  }
 });
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
+
+
+
+// mongodb+srv://aryan158:chidori@cluster0.5gp1qta.mongodb.net/
