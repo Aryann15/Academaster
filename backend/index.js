@@ -104,23 +104,30 @@ app.get("/admin/courses",authenticateJwt , (req, res) => {
 //user routes
 
 app.post("/user/signup", (req, res) => {
-  const user = { ...req.body, purchasedCourses: [] };
+  const user = req.body;
   const existingUser = USERS.find((a) => a.username === user.username);
   if (existingUser) {
-    res
-      .status(403)
-      .json({ message: "Someone with that username already exists" });
+    res.status(403).json({ message: "Someone with that username already exists" });
   } else {
+    const token = generateJwt(user);
     USERS.push(user);
-    res.json({ message: "User created successfully" });
+    res.json({ message: "User created successfully",token });
   }
 });
-app.post("/user/login", userAuthentication, (req, res) => {
-  res.json({ message: "Logged in successfully" });
+app.post("/user/login",(req, res) => {
+  const {username,password} =req.headers;
+  const user = USERS.find(u => u.username == username && u.password ==password)
+  if (user){
+    const token = generateJwt(user);
+    res.json({ message: "Logged in successfully",token});
+  }
+  else{
+    res.status(403).json({message: "user authentication failed"})
+  }  
 });
 
-app.get("/user/courses", userAuthentication, (req, res) => {
-  res.json({ courses: COURSES.filter((c) => c.published) });
+app.get("/user/courses",authenticateJwt, (req, res) => {
+  res.json({ courses: COURSES });
 });
 
 app.post("/user/courses/:courseId", userAuthentication, (req, res) => {
