@@ -132,12 +132,20 @@ app.get("/user/courses",authenticateJwt, (req, res) => {
 
 app.post("/user/courses/:courseId", userAuthentication, (req, res) => {
   const courseId = Number(req.params.courseId);
-  const course = COURSES.find((c) => c.id === courseId && c.published);
+  const course = COURSES.find((c) => c.id === courseId );
   if (course) {
-    req.user.purchasedCourses.push(courseId);
-    res.json({ message: "Course purchased successfully " });
-  } else {
-    res.status(404).json({ message: "Course not found or not available!" });
+    const user = USERS.find(u => u.username === req.user.username);
+    if (user){
+      if(!user.purchasedCourses){
+        user.purchasedCourses =[];
+      }
+      user.purchasedCourses.push(course)
+      res.json({message:" course purchased successfully"})
+    }else{
+      res.status(403).json({message: "User not found"})
+    }
+  }else{
+    res.status(404).json({message: "course not found"})
   }
 });
 
