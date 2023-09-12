@@ -30,6 +30,11 @@ const courseSchema = new mongoose.Schema({
   published: Boolean
 })
 
+//mongoose models
+const User = mongoose.model('User',userSchema)
+const Admin = mongoose.model('Admin',adminSchema)
+const Course = mongoose.model('Course', courseSchema)
+
 
 const generateJwt = (user) => {
   const payload = {username: user.username}
