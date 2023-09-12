@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+const jwt = require ('jsonwebtoken')
 app.use(express.json());
 
 let ADMINS = [];
@@ -11,10 +11,24 @@ const secretKey = "tears_on_my_keyboard"
 
 const generateJwt = (user) => {
   const payload = {username: user.username}
-  return generateJwt.sign(payload,secretKey,{expiresIn:'1h'})
+  return jwt.sign(payload,secretKey,{expiresIn:'1h'})
 }
 
+const authenticateJwt = (req,res,next) => {
+  const token = req.headers.authorization
 
+  if (token){
+    jwt.verify(token,secretKey,(err,user) =>{
+      if (err){
+        return res.sendStatus(403);
+      }
+      req.user= user
+      next();
+    })
+  }else{
+    return res.sendStatus(401);
+  }
+}
 
 const adminAuthentication = (req, res, next) => {
   const { username, password } = req.headers;
@@ -48,12 +62,15 @@ app.post("/admin/signup", (req, res) => {
   if (existingAdmin) {
     res.status(403).json({ message: "admin already exists" });
   } else {
+
     ADMINS.push(admin);
-    res.json({ message: " Admin created succesfully" });
+    const token = generateJwt(admin)
+    res.json({ message: " Admin created succesfully",token });
   }
 });
 
-app.post("/admin/login", adminAuthentication, (req, res) => {
+app.post("/admin/login", (req, res) => {
+  const {username,password} = req.headers;
   res.json({ message: " logged in successfully" });
 });
 
