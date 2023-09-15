@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextField, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 const Signin = () => {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
   return (
     <div>
-      {" "}
+      {email}{" "}
       <div
         style={{
           display: "flex",
@@ -19,6 +21,7 @@ const Signin = () => {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Card varint="outlined" style={{ width: 400, padding: 20 }}>
           <TextField
+            onChange={(e) => setEmail(e.target.value)}
             fullWidth={true}
             id={"username"}
             label="Username"
@@ -26,6 +29,7 @@ const Signin = () => {
           />
           <br /> <br />
           <TextField
+            onChange={(e) => setPassword(e.target.value)}
             fullWidth={true}
             id={"password"}
             label="Password"
@@ -37,18 +41,22 @@ const Signin = () => {
           <br />
           <Button
             onClick={() => {
-              let username = document.getElementById("username").value;
-              let password = document.getElementById("password").value;
+              function callback1(res) {
+                res.json().then(callback2);
+              }
+              function callback2(data) {
+                localStorage.setItem("token",data.token)
+              }
               fetch("http://localhost:3000/admin/signup", {
                 method: "POST",
                 body: JSON.stringify({
-                  username,
-                  password,
+                  username:email,
+                  password:password,
                 }),
                 headers: {
-                  "Content-type" : "application/json" 
-                }
-              });
+                  "Content-type": "application/json",
+                },
+              }).then(callback1);
             }}
             size="large"
             variant="contained"
