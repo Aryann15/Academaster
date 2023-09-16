@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { TextField, Typography } from "@mui/material";
+import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 const Addcourse = () => {
   const [title, setTitle] = useState();
@@ -8,6 +9,18 @@ const Addcourse = () => {
   const [price, setPrice] = useState();
   return (
     <div>
+    <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          paddingTop: 150,
+          marginBottom: 10,
+        }}
+      >
+        <Typography variant={"h6"}>ADD COURSE</Typography>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Card varint="outlined" style={{ width: 400, padding: 20 }}>
       {title}
       {desc}
       {price}
@@ -18,6 +31,7 @@ const Addcourse = () => {
         label="Course name"
         variant="outlined"
       />
+      <br /><br />
       <TextField
         onChange={(e) => setDesc(e.target.value)}
         fullWidth={true}
@@ -25,6 +39,7 @@ const Addcourse = () => {
         label="description"
         variant="outlined"
       />
+      <br /><br />
       <TextField
         onChange={(e) => setPrice(e.target.value)}
         fullWidth={true}
@@ -33,7 +48,9 @@ const Addcourse = () => {
         type="Number"
         variant="outlined"
       />
+      <br /><br /><br />
       <Button
+      variant="contained"
         onClick={() => {
           function callback1(res) {
             res.json().then(callback2);
@@ -57,11 +74,12 @@ const Addcourse = () => {
           }).then(callback1);
         }}
       >
-        {" "}
+        
         Add course
       </Button>
-    </div>
+      </Card>
+    
+    </div></div>
   );
 };
-
 export default Addcourse;
