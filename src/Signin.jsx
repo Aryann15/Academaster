@@ -47,7 +47,7 @@ const Signin = () => {
               function callback2(data) {
                 localStorage.setItem("token",data.token)
               }
-              fetch("http://localhost:3000/admin/signup", {
+              fetch("http://localhost:3000/admin/signin", {
                 method: "POST",
                 body: JSON.stringify({
                   username:email,
@@ -61,7 +61,7 @@ const Signin = () => {
             size="large"
             variant="contained"
           >
-            {" "}
+           
             Sign in
           </Button>
         </Card>
