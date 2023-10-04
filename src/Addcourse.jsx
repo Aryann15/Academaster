@@ -21,9 +21,9 @@ const Addcourse = () => {
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Card varint="outlined" style={{ width: 400, padding: 20 }}>
-      {title}
+      {/* {title}
       {desc}
-      {price}
+      {price} */}
       <TextField
         onChange={(e) => setTitle(e.target.value)}
         fullWidth={true}
